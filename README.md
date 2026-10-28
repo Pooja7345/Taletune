@@ -1,56 +1,77 @@
-# Welcome to your Expo app 👋
+# 🎙️ TaleTune
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Tell stories together, one voice at a time.**
 
-## Get started
+TaleTune is a collaborative audio-storytelling mobile app. Friends join a room with a
+6-digit code, take turns recording the lines of their characters while the script
+highlights live (like lyrics in a karaoke app), then turn the whole story into a single
+audiobook and share it on an Instagram-style feed.
 
-1. Install dependencies
+## ✨ Features
 
-   ```bash
-   npm install
-   ```
+- **Accounts & profiles** – email login, unique `@username`, photo and bio
+- **Rooms** – create or join with a 6-digit code; members update in real time
+- **Script engine** – paste a script (`Name: dialogue`), it is split into lines and characters, and the host assigns each character to a friend
+- **Turn-based recording** – the current line is highlighted on every device; the person whose turn it is records, previews, re-records and sends
+- **Listen together** – every recorded line can be played by everyone, plus "Play full story"
+- **Audiobook** – all clips are merged into one audio with pauses between lines (Cloudinary transformations, chunked merge for long stories)
+- **Publish with consent** – a story goes public only after every voice in the cast allows it
+- **Social feed** – latest stories, likes, comments, follow/unfollow and a "Following" tab
+- **Global mini player** – play, ⏪ 10s / 10s ⏩, seek bar, keeps playing while you browse
+- **Lyrics view** – a full-screen player where the script scrolls and highlights in sync with the audio
 
-2. Start the app
+## 🧱 Tech stack
 
-   ```bash
-   npx expo start
-   ```
+| Area | Technology |
+|---|---|
+| App | React Native, Expo (SDK 57), Expo Router, TypeScript |
+| Auth & database | Firebase Authentication, Cloud Firestore (real-time listeners, transactions) |
+| Audio | `expo-audio` (recording, playback, seeking) |
+| Media storage | Cloudinary (audio and images, unsigned uploads) |
+| Merge server (optional) | Python, FastAPI, ffmpeg |
 
-In the output, you'll find options to open the app in a
+## 🗂️ Data model (Firestore)
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+users/{uid}                    profile, followersCount, followingCount
+usernames/{username}           unique username → uid
+users/{uid}/following|followers/{uid}
+rooms/{code}                   host, members, status, characters, currentLineIndex, consent
+rooms/{code}/lines/{n}         character, text, audioUrl, duration
+posts/{id}                     title, audiobookUrl, author, cast, timeline, likesCount
+posts/{id}/likes|comments/{id}
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 🚀 Getting started
 
-### Other setup steps
+```bash
+git clone https://github.com/Pooja7345/taletune.git
+cd taletune
+npm install
+cp .env.example .env     # then fill in your own keys
+npx expo start
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Create a Firebase project (Authentication → Email/Password, Firestore) and a free
+Cloudinary account with an **unsigned** upload preset, then put the values in `.env`.
 
-## Learn more
+## 🔐 Security note
 
-To learn more about developing your project with Expo, look at the following resources:
+Firestore rules in this demo allow any signed-in user to read and write. Tighten them
+(per-room membership, owner-only edits) before a public release.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## 🗺️ Roadmap
 
-## Join the community
+- [ ] Stricter Firestore security rules
+- [ ] Import a story from PDF / Word / TXT
+- [ ] AI assistant to play a character or write a story
+- [ ] Search and notifications
+- [ ] Android APK release
 
-Join our community of developers creating universal apps.
+## 📸 Screenshots
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+_Add screenshots of: login, room with highlighted script, feed, lyrics player._
+
+## 👩‍💻 Author
+
+**Pooja Kumari** – [GitHub](https://github.com/Pooja7345) · [LinkedIn](https://www.linkedin.com/in/pooja-kumari-37b742220/)
